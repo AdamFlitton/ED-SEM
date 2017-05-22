@@ -11,6 +11,7 @@ mydata<-mydata[,c("Country",
                   "q_rule_lawNP",
                   "EuropeanDescentCompl",
                   "PWAgTran",
+                  "tropicalNP",
                   "Latitude")]
 mydata<-mydata[complete.cases(mydata),]
 mydata$WorldBankGDP2011<-log(mydata$WorldBankGDP2011)
@@ -81,5 +82,6 @@ mydata<-mydata %>% mutate_each_(funs(as.numeric(scale(.))),vars=c("WorldBankGDP2
                                                                   "EuropeanDescentCompl",
                                                                   "PWAgTran",
                                                                   "Latitude",
+                                                                  "tropicalNP",
                                                                   "adjuststatehist",
                                                                   "adjustagtran"))
