@@ -12,8 +12,11 @@ mydata<-mydata[,c("Country",
                   "EuropeanDescentCompl",
                   "PWAgTran",
                   "tropicalNP",
-                  "Latitude")]
+                  "Latitude",
+                  "LangFam2017")]
 mydata<-mydata[complete.cases(mydata),]
+#Remove Guyana, Jamaica, Mauritius, Paraguay and Trinidad - concerns over categorising language family.
+mydata<-mydata[-c(43,53,66,78,97),]
 mydata$WorldBankGDP2011<-log(mydata$WorldBankGDP2011)
 
 ####Ancestry adjustment####
@@ -85,3 +88,6 @@ mydata<-mydata %>% mutate_each_(funs(as.numeric(scale(.))),vars=c("WorldBankGDP2
                                                                   "tropicalNP",
                                                                   "adjuststatehist",
                                                                   "adjustagtran"))
+
+
+write.csv(mydata,file="finaldata.csv")
