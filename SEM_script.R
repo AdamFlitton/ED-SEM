@@ -91,3 +91,63 @@ mydata<-mydata %>% mutate_each_(funs(as.numeric(scale(.))),vars=c("WorldBankGDP2
 
 
 write.csv(mydata,file="finaldata.csv")
+
+######Graphs for paper
+setwd("~/desktop/Data")
+
+mydata<-read.csv("finaldata.csv",header=T)
+names(mydata)
+
+
+ggplot(mydata,aes(x=statehist,y=gdp))+
+  geom_point()+
+  theme(panel.border=element_blank(),panel.background=element_blank(),axis.line = element_line(colour = "black"),
+        axis.title=element_text(size=18),axis.text=element_text(size=14))+
+  geom_smooth(method="lm",alpha=0.1,colour="black",size=0.5)+
+  xlab("State History")+
+  ylab("GDP")
+
+
+ggplot(mydata,aes(x=inst,y=gdp))+
+  geom_point()+
+  theme(panel.border=element_blank(),panel.background=element_blank(),axis.line = element_line(colour = "black"),
+        axis.title=element_text(size=18),axis.text=element_text(size=14))+
+  geom_smooth(method="lm",alpha=0.1,colour="black",size=0.5)+
+  xlab("Institution Quality")+
+  ylab("GDP")
+
+#need a new column containing intercepts
+lm1<-lmer(inst~statehist+(1|langfam),mydata)
+lmres<-coef(lm1)$langfam
+
+lmres$langfam<-rownames(lmres)
+rownames(lmres)<-NULL
+lmres$inter<-lmres$`(Intercept)`
+lmres$`(Intercept)`<-NULL
+mydata$instres <- lmres[match(paste(mydata$langfam),paste(lmres$langfam)),"inter"]
+
+
+  
+ggplot(mydata,aes(x=statehist,y=inst))+
+  geom_point()+
+  theme(panel.border=element_blank(),panel.background=element_blank(),axis.line = element_line(colour = "black"),
+        axis.title=element_text(size=18),axis.text=element_text(size=14))+
+  geom_smooth(method="lm",alpha=0.1,colour="black",size=0.5)+
+ # geom_rug(data=mydata,aes(y=instres),sides="l")+
+  #geom_smooth(data=subset(mydata,langfam=="Niger-Congo"|langfam=="Balto-Slavic"|langfam=="Germanic"),
+ #             aes(statehist,inst,color=langfam),method=lm,se=FALSE)+
+  xlab("State History")+
+  ylab("Institution Quality")
+
+
+
+res<-residuals(lm(gdp~inst,mydata))
+mydata$res<-res
+
+ggplot(mydata,aes(x=statehist,y=res))+
+  geom_point()+
+  theme(panel.border=element_blank(),panel.background=element_blank(),axis.line = element_line(colour = "black"),
+        axis.title=element_text(size=18),axis.text=element_text(size=14))+
+  geom_smooth(method="lm",alpha=0.1,colour="black",size=0.5)+
+  xlab("State History")+
+  ylab("Residuals of GDP~Institution Quality Model")
