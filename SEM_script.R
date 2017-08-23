@@ -143,7 +143,7 @@ plot4<-ggplot(mydata,aes(x=statehist,y=res))+
 library(cowplot)
 plot_grid(plot1,plot2,plot3,plot4,labels="AUTO",label_size=20,vjust=1)
 
-ggsave("plot1.pdf",path="~/desktop/",scale=1,dpi=300,limitsize=TRUE)
+ggsave("plot1.pdf",path="~/desktop/",scale=4,dpi=300,limitsize=TRUE,width=8.7,height=8.7,units="cm")
 
 
 
