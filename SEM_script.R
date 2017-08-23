@@ -98,8 +98,9 @@ setwd("~/desktop/Data")
 mydata<-read.csv("finaldata.csv",header=T)
 names(mydata)
 
+library(ggplot2)
 
-ggplot(mydata,aes(x=statehist,y=gdp))+
+plot1<-ggplot(mydata,aes(x=statehist,y=gdp))+
   geom_point()+
   theme(panel.border=element_blank(),panel.background=element_blank(),axis.line = element_line(colour = "black"),
         axis.title=element_text(size=18),axis.text=element_text(size=14))+
@@ -108,7 +109,7 @@ ggplot(mydata,aes(x=statehist,y=gdp))+
   ylab("GDP")
 
 
-ggplot(mydata,aes(x=inst,y=gdp))+
+plot2<-ggplot(mydata,aes(x=inst,y=gdp))+
   geom_point()+
   theme(panel.border=element_blank(),panel.background=element_blank(),axis.line = element_line(colour = "black"),
         axis.title=element_text(size=18),axis.text=element_text(size=14))+
@@ -116,6 +117,37 @@ ggplot(mydata,aes(x=inst,y=gdp))+
   xlab("Institution Quality")+
   ylab("GDP")
 
+
+plot3<-ggplot(mydata,aes(x=statehist,y=inst))+
+  geom_point()+
+  theme(panel.border=element_blank(),panel.background=element_blank(),axis.line = element_line(colour = "black"),
+        axis.title=element_text(size=18),axis.text=element_text(size=14))+
+  geom_smooth(method="lm",alpha=0.1,colour="black",size=0.5)+
+  # geom_rug(data=mydata,aes(y=instres),sides="l")+
+  #geom_smooth(data=subset(mydata,langfam=="Niger-Congo"|langfam=="Balto-Slavic"|langfam=="Germanic"),
+  #             aes(statehist,inst,color=langfam),method=lm,se=FALSE)+
+  xlab("State History")+
+  ylab("Institution Quality")
+
+res<-residuals(lm(gdp~inst,mydata))
+mydata$res<-res
+
+plot4<-ggplot(mydata,aes(x=statehist,y=res))+
+  geom_point()+
+  theme(panel.border=element_blank(),panel.background=element_blank(),axis.line = element_line(colour = "black"),
+        axis.title=element_text(size=18),axis.text=element_text(size=14))+
+  geom_smooth(method="lm",alpha=0.1,colour="black",size=0.5)+
+  xlab("State History")+
+  ylab("GDP~Institutions Model Residuals")
+
+library(cowplot)
+plot_grid(plot1,plot2,plot3,plot4,labels="AUTO",label_size=20,vjust=1)
+
+ggsave("plot1.pdf",path="~/desktop/",scale=1,dpi=300,limitsize=TRUE)
+
+
+
+#Rug?
 #need a new column containing intercepts
 lm1<-lmer(inst~statehist+(1|langfam),mydata)
 lmres<-coef(lm1)$langfam
@@ -141,13 +173,4 @@ ggplot(mydata,aes(x=statehist,y=inst))+
 
 
 
-res<-residuals(lm(gdp~inst,mydata))
-mydata$res<-res
 
-ggplot(mydata,aes(x=statehist,y=res))+
-  geom_point()+
-  theme(panel.border=element_blank(),panel.background=element_blank(),axis.line = element_line(colour = "black"),
-        axis.title=element_text(size=18),axis.text=element_text(size=14))+
-  geom_smooth(method="lm",alpha=0.1,colour="black",size=0.5)+
-  xlab("State History")+
-  ylab("Residuals of GDP~Institution Quality Model")
