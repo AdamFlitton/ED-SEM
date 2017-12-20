@@ -140,6 +140,20 @@ plot4<-ggplot(mydata,aes(x=statehist,y=res))+
   xlab("State History")+
   ylab("GDP~Institutions Model Residuals")
 
+#extra plot with residuals of gdp~inst<-agtran
+res<-residuals(lm(gdp~inst,mydata))
+mydata$res<-res
+
+library(ggrepel)
+plot5<-ggplot(mydata,aes(x=agtran,y=res))+
+  geom_point()+
+  #geom_text_repel(aes(x=agtran, y=res, label = Country))+
+  theme(panel.border=element_blank(),panel.background=element_blank(),axis.line = element_line(colour = "black"),
+        axis.title=element_text(size=18),axis.text=element_text(size=14))+
+  geom_smooth(method="lm",alpha=0.1,colour="black",size=0.5)+
+  xlab("Timing of Agriculture")+
+  ylab("GDP~Institutions Model Residuals")
+
 library(cowplot)
 plot_grid(plot1,plot2,plot3,plot4,labels="AUTO",label_size=20,vjust=1)
 
