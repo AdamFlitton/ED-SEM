@@ -92,7 +92,7 @@ mydata<-mydata %>% mutate_each_(funs(as.numeric(scale(.))),vars=c("WorldBankGDP2
 
 write.csv(mydata,file="finaldata.csv")
 
-######Graphs for paper
+######Graphs
 setwd("~/desktop/Data")
 
 mydata<-read.csv("finaldata.csv",header=T)
@@ -158,32 +158,6 @@ library(cowplot)
 plot_grid(plot1,plot2,plot3,plot4,labels="AUTO",label_size=20,vjust=1)
 
 ggsave("plot1.pdf",path="~/desktop/",scale=4,dpi=300,limitsize=TRUE,width=8.7,height=8.7,units="cm")
-
-
-
-#Rug?
-#need a new column containing intercepts
-lm1<-lmer(inst~statehist+(1|langfam),mydata)
-lmres<-coef(lm1)$langfam
-
-lmres$langfam<-rownames(lmres)
-rownames(lmres)<-NULL
-lmres$inter<-lmres$`(Intercept)`
-lmres$`(Intercept)`<-NULL
-mydata$instres <- lmres[match(paste(mydata$langfam),paste(lmres$langfam)),"inter"]
-
-
-  
-ggplot(mydata,aes(x=statehist,y=inst))+
-  geom_point()+
-  theme(panel.border=element_blank(),panel.background=element_blank(),axis.line = element_line(colour = "black"),
-        axis.title=element_text(size=18),axis.text=element_text(size=14))+
-  geom_smooth(method="lm",alpha=0.1,colour="black",size=0.5)+
- # geom_rug(data=mydata,aes(y=instres),sides="l")+
-  #geom_smooth(data=subset(mydata,langfam=="Niger-Congo"|langfam=="Balto-Slavic"|langfam=="Germanic"),
- #             aes(statehist,inst,color=langfam),method=lm,se=FALSE)+
-  xlab("State History")+
-  ylab("Institution Quality")
 
 
 
